@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  --color-verde-profundo: #294C3F;
+  --color-verde-dark: #1D362D;
+  --color-verde-principal: #527A68;
+  --color-verde-suave: #6D9482;
+  --color-verde-claro: #A2BEB2;
+  --color-verde-pale: #E6EDE9;
+  --color-crema: #FFF9EF;
+  --color-beige: #F3E9D8;
+  --color-beige-dark: #E4D5BE;
+  --color-dorado: #CBB082;
+  --color-dorado-soft: #E5D5BD;
+  --color-terracota: #DE8A73;
+  --color-terracota-soft: #F5D3CA;
+}
+
+@keyframes breathe-circle {
+  0%, 100% {
+    transform: scale(0.85);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+}
+
+@keyframes float-gentle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-breathe {
+  animation: breathe-circle 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.animate-float {
+  animation: float-gentle 4s ease-in-out infinite;
+}
+
+html, body {
+  min-height: 100%;
+  font-family: var(--font-sans);
+  background-color: #FFF9EF;
+  color: #1D362D;
+  -webkit-tap-highlight-color: transparent;
+  scroll-behavior: smooth;
+}

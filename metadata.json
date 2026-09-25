@@ -1,0 +1,6 @@
+{
+  "name": "PAUSA - Tu pausa de 2 minutos",
+  "description": "Tu pausa de 2 minutos para bajar revoluciones. Dime cómo estás y yo te doy la pausa adecuada.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
