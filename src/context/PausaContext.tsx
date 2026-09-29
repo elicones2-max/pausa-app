@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import {
   PauseExperience,
   UserProfile,
@@ -7,7 +7,8 @@ import {
   PostFeelingType,
   MoodType,
 } from '../types/pausa';
-import { CORE_PAUSES, INITIAL_ACHIEVEMENTS, FOURTEEN_DAYS_JOURNEY } from '../data/pausasData';
+import { CORE_PAUSES, INITIAL_ACHIEVEMENTS } from '../data/pausasData';
+import { supabase } from '../utils/supabase';
 
 export type AppView =
   | 'landing'
@@ -33,7 +34,7 @@ interface PausaContextType {
   soundEnabled: boolean;
   startPause: (experience: PauseExperience, isDaily?: boolean, dayNumber?: number) => void;
   startPauseByMood: (mood: MoodType) => void;
-  finishPause: (feeling: PostFeelingType) => void;
+  finishPause: (feeling: PostFeelingType) => Promise<void> | void;
   exitPause: () => void;
   updateProfile: (updates: Partial<UserProfile>) => void;
   toggleSound: () => void;
@@ -56,6 +57,7 @@ const PausaContext = createContext<PausaContextType | undefined>(undefined);
 
 const STORAGE_KEYS = {
   PROFILE: 'pausa_user_profile',
+  PROFILE_ID: 'pausa_profile_id',
   SESSIONS: 'pausa_sessions',
   JOURNEY_DAY: 'pausa_current_journey_day',
   ACHIEVEMENTS: 'pausa_achievements',
@@ -67,6 +69,14 @@ export const PausaProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [activePause, setActivePause] = useState<PauseExperience | null>(null);
   const [activeIsDaily, setActiveIsDaily] = useState<boolean>(false);
   const [activeDayNumber, setActiveDayNumber] = useState<number | null>(null);
+
+  const [profileId, setProfileId] = useState<string | null>(() => {
+    try {
+      return localStorage.getItem(STORAGE_KEYS.PROFILE_ID);
+    } catch {
+      return null;
+    }
+  });
 
   const [userProfile, setUserProfile] = useState<UserProfile>(() => {
     try {
@@ -120,13 +130,162 @@ export const PausaProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const [latestSession, setLatestSession] = useState<PauseSessionRecord | null>(null);
 
-  // Sync state to local storage
+  const profileIdRef = useRef<string | null>(profileId);
+  const isInitializingRef = useRef<boolean>(false);
+  const initialLoadCompleteRef = useRef<boolean>(false);
+  const skipNextSyncRef = useRef<boolean>(false);
+
+  useEffect(() => {
+    profileIdRef.current = profileId;
+  }, [profileId]);
+
+  // Sync profileId to localStorage
+  useEffect(() => {
+    try {
+      if (profileId) {
+        localStorage.setItem(STORAGE_KEYS.PROFILE_ID, profileId);
+      } else {
+        localStorage.removeItem(STORAGE_KEYS.PROFILE_ID);
+      }
+    } catch {
+      // ignore
+    }
+  }, [profileId]);
+
+  // Initialize or fetch profile from Supabase on mount
+  useEffect(() => {
+    if (isInitializingRef.current) return;
+    isInitializingRef.current = true;
+
+    const initProfile = async () => {
+      try {
+        let storedId: string | null = null;
+        try {
+          storedId = localStorage.getItem(STORAGE_KEYS.PROFILE_ID);
+        } catch {
+          storedId = null;
+        }
+
+        if (storedId) {
+          profileIdRef.current = storedId;
+          setProfileId(storedId);
+
+          const { data, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', storedId)
+            .maybeSingle();
+
+          if (!error && data) {
+            skipNextSyncRef.current = true;
+            setUserProfile({
+              name: data.name ?? DEFAULT_PROFILE.name,
+              primaryNeed: data.primary_need ?? data.primaryNeed ?? DEFAULT_PROFILE.primaryNeed,
+              usualMoment: data.usual_moment ?? data.usualMoment ?? DEFAULT_PROFILE.usualMoment,
+              preferredGuidance: data.preferred_guidance ?? data.preferredGuidance ?? DEFAULT_PROFILE.preferredGuidance,
+              isOnboarded: data.is_onboarded ?? data.isOnboarded ?? DEFAULT_PROFILE.isOnboarded,
+              isSubscribed: data.is_subscribed ?? data.isSubscribed ?? DEFAULT_PROFILE.isSubscribed,
+              createdAt: data.created_at ?? data.createdAt ?? DEFAULT_PROFILE.createdAt,
+            });
+          } else if (!error && !data) {
+            // Profile ID was in localStorage but record was not found in Supabase
+            const { data: createdData, error: createError } = await supabase
+              .from('profiles')
+              .insert({
+                name: DEFAULT_PROFILE.name,
+                primary_need: DEFAULT_PROFILE.primaryNeed,
+                usual_moment: DEFAULT_PROFILE.usualMoment,
+                preferred_guidance: DEFAULT_PROFILE.preferredGuidance,
+                is_onboarded: DEFAULT_PROFILE.isOnboarded,
+                is_subscribed: DEFAULT_PROFILE.isSubscribed,
+              })
+              .select('id')
+              .single();
+
+            if (!createError && createdData?.id) {
+              const newId = createdData.id;
+              try {
+                localStorage.setItem(STORAGE_KEYS.PROFILE_ID, newId);
+              } catch {
+                // ignore
+              }
+              profileIdRef.current = newId;
+              setProfileId(newId);
+            }
+          }
+        } else {
+          // No pausa_profile_id in localStorage: create a new record in public.profiles with DEFAULT_PROFILE
+          const { data, error } = await supabase
+            .from('profiles')
+            .insert({
+              name: DEFAULT_PROFILE.name,
+              primary_need: DEFAULT_PROFILE.primaryNeed,
+              usual_moment: DEFAULT_PROFILE.usualMoment,
+              preferred_guidance: DEFAULT_PROFILE.preferredGuidance,
+              is_onboarded: DEFAULT_PROFILE.isOnboarded,
+              is_subscribed: DEFAULT_PROFILE.isSubscribed,
+            })
+            .select('id')
+            .single();
+
+          if (!error && data?.id) {
+            const newId = data.id;
+            try {
+              localStorage.setItem(STORAGE_KEYS.PROFILE_ID, newId);
+            } catch {
+              // ignore
+            }
+            profileIdRef.current = newId;
+            setProfileId(newId);
+          }
+        }
+      } catch (err) {
+        console.warn('Fallo al inicializar perfil en Supabase (usando localStorage como respaldo):', err);
+      } finally {
+        initialLoadCompleteRef.current = true;
+      }
+    };
+
+    initProfile();
+  }, []);
+
+  // Sync state to local storage and Supabase when userProfile changes
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEYS.PROFILE, JSON.stringify(userProfile));
     } catch {
       // ignore
     }
+
+    if (!initialLoadCompleteRef.current) return;
+
+    if (skipNextSyncRef.current) {
+      skipNextSyncRef.current = false;
+      return;
+    }
+
+    const currentProfileId = profileIdRef.current || localStorage.getItem(STORAGE_KEYS.PROFILE_ID);
+    if (!currentProfileId) return;
+
+    const syncProfile = async () => {
+      try {
+        await supabase
+          .from('profiles')
+          .update({
+            name: userProfile.name,
+            primary_need: userProfile.primaryNeed,
+            usual_moment: userProfile.usualMoment,
+            preferred_guidance: userProfile.preferredGuidance,
+            is_onboarded: userProfile.isOnboarded,
+            is_subscribed: userProfile.isSubscribed,
+          })
+          .eq('id', currentProfileId);
+      } catch (err) {
+        console.warn('Fallo al sincronizar perfil con Supabase:', err);
+      }
+    };
+
+    syncProfile();
   }, [userProfile]);
 
   useEffect(() => {
@@ -210,18 +369,90 @@ export const PausaProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setAchievements(updated);
   };
 
-  const finishPause = (feeling: PostFeelingType) => {
+  const finishPause = async (feeling: PostFeelingType) => {
     if (!activePause) return;
 
+    const currentPause = activePause;
+    const isDaily = activeIsDaily;
+    const dayNum = activeDayNumber;
+
+    let sessionId = 'session_' + Date.now();
+    let currentProfileId = profileIdRef.current;
+    if (!currentProfileId) {
+      try {
+        currentProfileId = localStorage.getItem(STORAGE_KEYS.PROFILE_ID);
+      } catch {
+        currentProfileId = null;
+      }
+    }
+
+    // If profile_id is not yet available, attempt to register profile first
+    if (!currentProfileId) {
+      try {
+        const { data: newProf } = await supabase
+          .from('profiles')
+          .insert({
+            name: userProfile.name,
+            primary_need: userProfile.primaryNeed,
+            usual_moment: userProfile.usualMoment,
+            preferred_guidance: userProfile.preferredGuidance,
+            is_onboarded: userProfile.isOnboarded,
+            is_subscribed: userProfile.isSubscribed,
+          })
+          .select('id')
+          .single();
+
+        if (newProf && newProf.id) {
+          const newId = String(newProf.id);
+          currentProfileId = newId;
+          try {
+            localStorage.setItem(STORAGE_KEYS.PROFILE_ID, newId);
+          } catch {
+            // ignore
+          }
+          profileIdRef.current = newId;
+          setProfileId(newId);
+        }
+      } catch {
+        // ignore
+      }
+    }
+
+    if (currentProfileId) {
+      try {
+        const { data, error } = await supabase
+          .from('pause_sessions')
+          .insert({
+            profile_id: currentProfileId,
+            mood_type: currentPause.moodType,
+            title: currentPause.title,
+            duration_completed_seconds: 120,
+            post_feeling: feeling,
+            is_daily_pause: isDaily,
+            day_number: dayNum ?? null,
+          })
+          .select('id')
+          .single();
+
+        if (!error && data?.id) {
+          sessionId = data.id;
+        } else if (error) {
+          console.warn('Fallo al registrar sesión en Supabase (usando respaldo local):', error.message);
+        }
+      } catch (err) {
+        console.warn('Error al registrar sesión en Supabase (usando respaldo local):', err);
+      }
+    }
+
     const newRecord: PauseSessionRecord = {
-      id: 'session_' + Date.now(),
+      id: sessionId,
       timestamp: new Date().toISOString(),
-      moodType: activePause.moodType,
-      title: activePause.title,
+      moodType: currentPause.moodType,
+      title: currentPause.title,
       durationCompletedSeconds: 120,
       postFeeling: feeling,
-      isDailyPause: activeIsDaily,
-      dayNumber: activeDayNumber ?? undefined,
+      isDailyPause: isDaily,
+      dayNumber: dayNum ?? undefined,
     };
 
     const newSessions = [newRecord, ...sessions];
@@ -229,7 +460,7 @@ export const PausaProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setLatestSession(newRecord);
 
     // If it was daily pause, advance day up to 14
-    if (activeIsDaily && activeDayNumber && activeDayNumber >= currentJourneyDay) {
+    if (isDaily && dayNum && dayNum >= currentJourneyDay) {
       if (currentJourneyDay < 14) {
         setCurrentJourneyDay((d) => d + 1);
       }
@@ -243,9 +474,14 @@ export const PausaProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setSessions([]);
     setCurrentJourneyDay(1);
     setAchievements(INITIAL_ACHIEVEMENTS);
-    localStorage.removeItem(STORAGE_KEYS.SESSIONS);
-    localStorage.removeItem(STORAGE_KEYS.JOURNEY_DAY);
-    localStorage.removeItem(STORAGE_KEYS.ACHIEVEMENTS);
+    setLatestSession(null);
+    try {
+      localStorage.removeItem(STORAGE_KEYS.SESSIONS);
+      localStorage.removeItem(STORAGE_KEYS.JOURNEY_DAY);
+      localStorage.removeItem(STORAGE_KEYS.ACHIEVEMENTS);
+    } catch {
+      // ignore
+    }
   };
 
   const resetToNewUser = () => {
@@ -256,10 +492,21 @@ export const PausaProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setActivePause(null);
     setActiveIsDaily(false);
     setActiveDayNumber(null);
-    localStorage.removeItem(STORAGE_KEYS.PROFILE);
-    localStorage.removeItem(STORAGE_KEYS.SESSIONS);
-    localStorage.removeItem(STORAGE_KEYS.JOURNEY_DAY);
-    localStorage.removeItem(STORAGE_KEYS.ACHIEVEMENTS);
+    setLatestSession(null);
+    setProfileId(null);
+    profileIdRef.current = null;
+    isInitializingRef.current = false;
+    initialLoadCompleteRef.current = false;
+
+    try {
+      localStorage.removeItem(STORAGE_KEYS.PROFILE);
+      localStorage.removeItem(STORAGE_KEYS.PROFILE_ID);
+      localStorage.removeItem(STORAGE_KEYS.SESSIONS);
+      localStorage.removeItem(STORAGE_KEYS.JOURNEY_DAY);
+      localStorage.removeItem(STORAGE_KEYS.ACHIEVEMENTS);
+    } catch {
+      // ignore
+    }
     setCurrentView('landing');
   };
 
