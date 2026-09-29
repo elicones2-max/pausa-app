@@ -180,7 +180,7 @@ export const PausaProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             skipNextSyncRef.current = true;
             setUserProfile({
               name: data.name ?? DEFAULT_PROFILE.name,
-              primaryNeed: data.primary_need ?? data.primaryNeed ?? DEFAULT_PROFILE.primaryNeed,
+              primaryNeed: data.primary_nee ?? data.primaryNeed ?? DEFAULT_PROFILE.primaryNeed,
               usualMoment: data.usual_moment ?? data.usualMoment ?? DEFAULT_PROFILE.usualMoment,
               preferredGuidance: data.preferred_guidance ?? data.preferredGuidance ?? DEFAULT_PROFILE.preferredGuidance,
               isOnboarded: data.is_onboarded ?? data.isOnboarded ?? DEFAULT_PROFILE.isOnboarded,
@@ -193,7 +193,7 @@ export const PausaProvider: React.FC<{ children: React.ReactNode }> = ({ childre
               .from('profiles')
               .insert({
                 name: DEFAULT_PROFILE.name,
-                primary_need: DEFAULT_PROFILE.primaryNeed,
+                primary_nee: DEFAULT_PROFILE.primaryNeed,
                 usual_moment: DEFAULT_PROFILE.usualMoment,
                 preferred_guidance: DEFAULT_PROFILE.preferredGuidance,
                 is_onboarded: DEFAULT_PROFILE.isOnboarded,
@@ -219,7 +219,7 @@ export const PausaProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             .from('profiles')
             .insert({
               name: DEFAULT_PROFILE.name,
-              primary_need: DEFAULT_PROFILE.primaryNeed,
+              primary_nee: DEFAULT_PROFILE.primaryNeed,
               usual_moment: DEFAULT_PROFILE.usualMoment,
               preferred_guidance: DEFAULT_PROFILE.preferredGuidance,
               is_onboarded: DEFAULT_PROFILE.isOnboarded,
@@ -273,7 +273,7 @@ export const PausaProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           .from('profiles')
           .update({
             name: userProfile.name,
-            primary_need: userProfile.primaryNeed,
+            primary_nee: userProfile.primaryNeed,
             usual_moment: userProfile.usualMoment,
             preferred_guidance: userProfile.preferredGuidance,
             is_onboarded: userProfile.isOnboarded,
@@ -393,7 +393,7 @@ export const PausaProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           .from('profiles')
           .insert({
             name: userProfile.name,
-            primary_need: userProfile.primaryNeed,
+            primary_nee: userProfile.primaryNeed,
             usual_moment: userProfile.usualMoment,
             preferred_guidance: userProfile.preferredGuidance,
             is_onboarded: userProfile.isOnboarded,
