@@ -37,6 +37,8 @@ interface PausaContextType {
   finishPause: (feeling: PostFeelingType) => Promise<void> | void;
   exitPause: () => void;
   updateProfile: (updates: Partial<UserProfile>) => void;
+  uploadAvatar: (file: File) => Promise<string>;
+  removeAvatar: () => Promise<void>;
   toggleSound: () => void;
   resetProgress: () => void;
   resetToNewUser: () => void;
@@ -51,6 +53,7 @@ const DEFAULT_PROFILE: UserProfile = {
   isOnboarded: false,
   isSubscribed: false,
   createdAt: new Date().toISOString(),
+  avatar_url: null,
 };
 
 const PausaContext = createContext<PausaContextType | undefined>(undefined);
@@ -186,6 +189,7 @@ export const PausaProvider: React.FC<{ children: React.ReactNode }> = ({ childre
               isOnboarded: data.is_onboarded ?? data.isOnboarded ?? DEFAULT_PROFILE.isOnboarded,
               isSubscribed: data.is_subscribed ?? data.isSubscribed ?? DEFAULT_PROFILE.isSubscribed,
               createdAt: data.created_at ?? data.createdAt ?? DEFAULT_PROFILE.createdAt,
+              avatar_url: data.avatar_url ?? null,
             });
           } else if (!error && !data) {
             // Profile ID was in localStorage but record was not found in Supabase
@@ -198,6 +202,7 @@ export const PausaProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                 preferred_guidance: DEFAULT_PROFILE.preferredGuidance,
                 is_onboarded: DEFAULT_PROFILE.isOnboarded,
                 is_subscribed: DEFAULT_PROFILE.isSubscribed,
+                avatar_url: null,
               })
               .select('id')
               .single();
@@ -224,6 +229,7 @@ export const PausaProvider: React.FC<{ children: React.ReactNode }> = ({ childre
               preferred_guidance: DEFAULT_PROFILE.preferredGuidance,
               is_onboarded: DEFAULT_PROFILE.isOnboarded,
               is_subscribed: DEFAULT_PROFILE.isSubscribed,
+              avatar_url: null,
             })
             .select('id')
             .single();
@@ -278,6 +284,7 @@ export const PausaProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             preferred_guidance: userProfile.preferredGuidance,
             is_onboarded: userProfile.isOnboarded,
             is_subscribed: userProfile.isSubscribed,
+            avatar_url: userProfile.avatar_url ?? null,
           })
           .eq('id', currentProfileId);
       } catch (err) {
@@ -322,6 +329,87 @@ export const PausaProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const updateProfile = (updates: Partial<UserProfile>) => {
     setUserProfile((prev) => ({ ...prev, ...updates }));
+  };
+
+  /**
+   * Upload user profile photo to Supabase Storage ('avatars' bucket)
+   * and link public URL to profiles.avatar_url.
+   * Includes seamless client-side base64 fallback for offline/demo reliability.
+   */
+  const uploadAvatar = async (file: File): Promise<string> => {
+    let finalUrl: string | null = null;
+    const currentProfileId = profileIdRef.current || localStorage.getItem(STORAGE_KEYS.PROFILE_ID) || 'guest';
+
+    // 1. Attempt Supabase Storage upload
+    try {
+      const fileExt = file.name.split('.').pop() || 'jpg';
+      const cleanExt = fileExt.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+      const fileName = `${currentProfileId}-${Date.now()}.${cleanExt}`;
+      const filePath = `avatars/${fileName}`;
+
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: true,
+        });
+
+      if (!uploadError && uploadData) {
+        const { data: publicUrlData } = supabase.storage
+          .from('avatars')
+          .getPublicUrl(filePath);
+
+        if (publicUrlData?.publicUrl) {
+          finalUrl = publicUrlData.publicUrl;
+        }
+      }
+    } catch {
+      // Handled via client-side storage fallback
+    }
+
+    // 2. If Supabase Storage was unavailable or offline, read as standard Data URL
+    if (!finalUrl) {
+      finalUrl = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = () => reject(new Error('No se pudo procesar la fotografía'));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // 3. Persist in local state and database
+    updateProfile({ avatar_url: finalUrl });
+
+    if (currentProfileId && currentProfileId !== 'guest') {
+      try {
+        await supabase
+          .from('profiles')
+          .update({ avatar_url: finalUrl })
+          .eq('id', currentProfileId);
+      } catch {
+        // Handled via local storage
+      }
+    }
+
+    return finalUrl;
+  };
+
+  /**
+   * Remove user profile photo
+   */
+  const removeAvatar = async (): Promise<void> => {
+    updateProfile({ avatar_url: null });
+    const currentProfileId = profileIdRef.current || localStorage.getItem(STORAGE_KEYS.PROFILE_ID);
+    if (currentProfileId && currentProfileId !== 'guest') {
+      try {
+        await supabase
+          .from('profiles')
+          .update({ avatar_url: null })
+          .eq('id', currentProfileId);
+      } catch {
+        // Handled via local storage
+      }
+    }
   };
 
   const toggleSound = () => {
@@ -528,6 +616,8 @@ export const PausaProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         finishPause,
         exitPause,
         updateProfile,
+        uploadAvatar,
+        removeAvatar,
         toggleSound,
         resetProgress,
         resetToNewUser,

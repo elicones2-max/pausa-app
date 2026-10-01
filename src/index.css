@@ -47,6 +47,72 @@
   animation: float-gentle 4s ease-in-out infinite;
 }
 
+/* Tactile Depth and Organic 3D Layering */
+.card-depth-sm {
+  background: linear-gradient(180deg, #FFFFFF 0%, #FFFDF9 100%);
+  border: 1px solid rgba(41, 76, 63, 0.12);
+  box-shadow: 
+    0 4px 12px -2px rgba(29, 54, 45, 0.04),
+    0 1px 3px 0 rgba(29, 54, 45, 0.03),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.9);
+}
+
+.card-depth-md {
+  background: linear-gradient(180deg, #FFFFFF 0%, #FFFDF9 100%);
+  border: 1px solid rgba(41, 76, 63, 0.14);
+  box-shadow: 
+    0 12px 28px -6px rgba(29, 54, 45, 0.08),
+    0 4px 10px -2px rgba(29, 54, 45, 0.03),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.95);
+}
+
+.card-depth-dark {
+  background: linear-gradient(165deg, #2E5547 0%, #294C3F 45%, #1D362D 100%);
+  border: 1px solid rgba(203, 176, 130, 0.38);
+  box-shadow: 
+    0 16px 36px -8px rgba(29, 54, 45, 0.38),
+    0 4px 12px -2px rgba(29, 54, 45, 0.15),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.card-depth-gold {
+  background: linear-gradient(165deg, #F9F2E7 0%, #F3E9D8 100%);
+  border: 1px solid rgba(203, 176, 130, 0.45);
+  box-shadow: 
+    0 8px 24px -4px rgba(104, 83, 47, 0.08),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
+}
+
+.button-tactile {
+  box-shadow: 
+    0 4px 14px 0 rgba(29, 54, 45, 0.22),
+    0 1px 2px 0 rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.25);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.button-tactile:active {
+  transform: translateY(1px);
+  box-shadow: 
+    0 2px 6px 0 rgba(29, 54, 45, 0.18),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+}
+
+.button-tactile-light {
+  box-shadow: 
+    0 4px 14px 0 rgba(104, 83, 47, 0.12),
+    0 1px 2px 0 rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.9);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.button-tactile-light:active {
+  transform: translateY(1px);
+  box-shadow: 
+    0 2px 6px 0 rgba(104, 83, 47, 0.1),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
+}
+
 html, body {
   min-height: 100%;
   font-family: var(--font-sans);
@@ -54,4 +120,5 @@ html, body {
   color: #1D362D;
   -webkit-tap-highlight-color: transparent;
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }

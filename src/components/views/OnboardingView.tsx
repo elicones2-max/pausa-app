@@ -32,7 +32,7 @@ export const OnboardingView: React.FC = () => {
   ];
 
   const startFirstPauseExperience = () => {
-    let moodKey: 'mente' | 'sobrecarga' | 'tension' | 'desconectar' = 'mente';
+    let moodKey: 'mente_acelerada' | 'sobrecarga' | 'tension' | 'desconectar' = 'mente_acelerada';
     if (primaryNeed.includes('sobrepaso') || primaryNeed.includes('pendientes')) {
       moodKey = 'sobrecarga';
     } else if (primaryNeed.includes('tensión') || primaryNeed.includes('hombros')) {
@@ -40,7 +40,7 @@ export const OnboardingView: React.FC = () => {
     } else if (primaryNeed.includes('apagar') || primaryNeed.includes('terminar el día')) {
       moodKey = 'desconectar';
     }
-    const exp = CORE_PAUSES[moodKey] || CORE_PAUSES['mente'];
+    const exp = CORE_PAUSES[moodKey] || CORE_PAUSES['mente_acelerada'];
     startPause(exp, true, 1);
   };
 
@@ -73,21 +73,29 @@ export const OnboardingView: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFF9EF] text-[#1D362D] flex flex-col justify-between max-w-md mx-auto w-full px-6 py-6 border-x-2 border-[#294C3F]/20 shadow-2xl">
+    <div className="min-h-screen bg-[#FFF9EF] text-[#1D362D] flex flex-col justify-between max-w-md mx-auto w-full px-4.5 sm:px-6 py-5 sm:py-6 border-x-2 border-[#294C3F]/20 shadow-2xl">
       {/* Header with High-End Contrast */}
-      <header className="flex items-center justify-between pt-2 pb-4 border-b border-[#294C3F]/15">
-        <div className="flex items-center gap-2">
-          <span className="font-serif text-2xl font-bold tracking-tight text-[#294C3F]">
-            PAUSA
-          </span>
-          <span className="text-[10px] uppercase tracking-widest text-[#294C3F] font-bold bg-[#F3E9D8] px-2 py-0.5 rounded-full border border-[#294C3F]/20">
-            Personalización
-          </span>
+      <header className="flex items-center justify-between pt-1 pb-3.5 border-b border-[#294C3F]/15">
+        <div className="flex items-center gap-2.5">
+          <img
+            src="/logo-pausa.png"
+            alt="Logo PAUSA"
+            className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl object-contain shadow-xs border border-[#294C3F]/15 shrink-0 bg-[#FFF9EF]"
+            referrerPolicy="no-referrer"
+          />
+          <div className="flex items-center gap-2">
+            <span className="font-serif text-[26px] sm:text-2xl font-bold tracking-tight text-[#294C3F] leading-none">
+              PAUSA
+            </span>
+            <span className="text-[10px] uppercase tracking-widest text-[#294C3F] font-bold bg-[#F3E9D8] px-2 py-0.5 rounded-full border border-[#294C3F]/20 hidden xs:inline-block">
+              Personalización
+            </span>
+          </div>
         </div>
 
         <button
           onClick={handleSkip}
-          className="text-xs font-bold text-[#294C3F] hover:text-[#1D362D] flex items-center gap-1 p-1 underline-offset-2 hover:underline"
+          className="text-xs font-bold text-[#294C3F] hover:text-[#1D362D] flex items-center gap-1 py-1.5 px-2 underline-offset-2 hover:underline"
         >
           <span>Saltar</span>
           <X size={16} />
@@ -161,14 +169,14 @@ export const OnboardingView: React.FC = () => {
                   key={opt.label}
                   type="button"
                   onClick={() => setPrimaryNeed(opt.label)}
-                  className={`w-full text-left p-4 rounded-2xl border-2 transition-all flex items-center justify-between text-xs sm:text-sm ${
+                  className={`w-full text-left p-4 rounded-2xl transition-all flex items-center justify-between text-xs sm:text-sm cursor-pointer ${
                     primaryNeed === opt.label
-                      ? 'bg-[#294C3F] border-[#294C3F] text-[#FFF9EF] font-bold shadow-md'
-                      : 'bg-white border-[#294C3F]/15 text-[#1D362D] hover:border-[#294C3F] font-medium shadow-xs'
+                      ? 'bg-[#294C3F] text-[#FFF9EF] font-bold shadow-lg border border-[#CBB082]/60 ring-2 ring-[#CBB082]/40 scale-[1.01]'
+                      : 'card-depth-sm text-[#1D362D] hover:border-[#294C3F]/40 font-medium'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl">{opt.icon}</span>
+                    <span className="text-2xl drop-shadow-xs">{opt.icon}</span>
                     <span>{opt.label}</span>
                   </div>
                   {primaryNeed === opt.label && <Check size={18} className="text-[#CBB082] stroke-[3]" />}
@@ -199,14 +207,14 @@ export const OnboardingView: React.FC = () => {
                   key={opt.label}
                   type="button"
                   onClick={() => setUsualMoment(opt.label)}
-                  className={`w-full text-left p-4 rounded-2xl border-2 transition-all flex items-center justify-between text-xs sm:text-sm ${
+                  className={`w-full text-left p-4 rounded-2xl transition-all flex items-center justify-between text-xs sm:text-sm cursor-pointer ${
                     usualMoment === opt.label
-                      ? 'bg-[#294C3F] border-[#294C3F] text-[#FFF9EF] font-bold shadow-md'
-                      : 'bg-white border-[#294C3F]/15 text-[#1D362D] hover:border-[#294C3F] font-medium shadow-xs'
+                      ? 'bg-[#294C3F] text-[#FFF9EF] font-bold shadow-lg border border-[#CBB082]/60 ring-2 ring-[#CBB082]/40 scale-[1.01]'
+                      : 'card-depth-sm text-[#1D362D] hover:border-[#294C3F]/40 font-medium'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl">{opt.icon}</span>
+                    <span className="text-2xl drop-shadow-xs">{opt.icon}</span>
                     <span>{opt.label}</span>
                   </div>
                   {usualMoment === opt.label && <Check size={18} className="text-[#CBB082] stroke-[3]" />}

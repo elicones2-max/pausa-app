@@ -35,27 +35,27 @@ export const RecorridoView: React.FC = () => {
           14 pequeñas pausas de 2 minutos para crear el hábito sin esfuerzo, sin teoría pesada y sin exigencias.
         </p>
 
-        {/* High-Contrast Progress Card */}
-        <div className="mt-4 p-4 rounded-2xl bg-white border-2 border-[#294C3F]/20 shadow-sm">
-          <div className="flex justify-between items-center text-xs font-bold text-[#1D362D] mb-2">
-            <span className="flex items-center gap-1 text-[#294C3F]">
-              <Sparkles size={13} className="text-[#CBB082]" />
+        {/* Progress Card with Depth */}
+        <div className="mt-4 p-4.5 rounded-2xl card-depth-sm">
+          <div className="flex justify-between items-center text-xs font-bold text-[#1D362D] mb-2.5">
+            <span className="flex items-center gap-1.5 text-[#294C3F]">
+              <Sparkles size={14} className="text-[#CBB082]" />
               <span>Tu avance en el recorrido</span>
             </span>
-            <span className="bg-[#294C3F] text-[#FFF9EF] px-2.5 py-0.5 rounded-full text-[11px]">
+            <span className="bg-[#294C3F] text-[#FFF9EF] px-2.5 py-0.5 rounded-full text-[11px] font-mono shadow-xs">
               Día {currentJourneyDay} de 14
             </span>
           </div>
-          <div className="w-full h-2.5 bg-[#F3E9D8] rounded-full overflow-hidden border border-[#294C3F]/10">
+          <div className="w-full h-3 bg-[#F3E9D8] rounded-full overflow-hidden border border-[#294C3F]/15 p-0.5">
             <div
-              className="h-full bg-gradient-to-r from-[#294C3F] to-[#527A68] rounded-full transition-all duration-500"
+              className="h-full bg-gradient-to-r from-[#294C3F] via-[#3E6756] to-[#527A68] rounded-full transition-all duration-500 shadow-xs"
               style={{ width: `${(currentJourneyDay / 14) * 100}%` }}
             />
           </div>
         </div>
       </section>
 
-      {/* 14 Days List with Crisp Contrast */}
+      {/* 14 Days List with Crisp Contrast & Depth */}
       <section className="space-y-3">
         {FOURTEEN_DAYS_JOURNEY.map((dayItem, index) => {
           const isCompleted = dayItem.dayNumber < currentJourneyDay;
@@ -72,7 +72,7 @@ export const RecorridoView: React.FC = () => {
             <React.Fragment key={dayItem.dayNumber}>
               {showPhaseHeader && (
                 <div className="pt-3 pb-1 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-[#294C3F]" />
+                  <span className="w-2.5 h-1 bg-[#294C3F] rounded-full" />
                   <span className="text-[11px] uppercase tracking-widest text-[#294C3F] font-bold">
                     {getPhaseName(dayItem.dayNumber)}
                   </span>
@@ -80,16 +80,16 @@ export const RecorridoView: React.FC = () => {
               )}
 
               <div
-                className={`p-4 rounded-2xl border-2 transition-all ${
+                className={`p-4.5 rounded-2xl transition-all ${
                   isCurrent
-                    ? 'bg-[#294C3F] text-[#FFF9EF] border-[#CBB082] shadow-xl relative overflow-hidden'
+                    ? 'card-depth-dark text-[#FFF9EF] relative overflow-hidden ring-2 ring-[#CBB082]/60'
                     : isCompleted
-                    ? 'bg-white border-[#294C3F]/25 text-[#1D362D] shadow-xs'
-                    : 'bg-white/80 border-[#294C3F]/10 text-[#1D362D]/60'
+                    ? 'card-depth-sm text-[#1D362D]'
+                    : 'bg-white/60 border border-[#294C3F]/10 text-[#1D362D]/55'
                 }`}
               >
                 {isCurrent && (
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#527A68]/30 rounded-full blur-2xl pointer-events-none" />
+                  <div className="absolute top-0 right-0 w-36 h-36 bg-[#CBB082]/15 rounded-full blur-2xl pointer-events-none" />
                 )}
 
                 <div className="relative z-10 flex items-start justify-between gap-3">
@@ -97,9 +97,9 @@ export const RecorridoView: React.FC = () => {
                     <div
                       className={`w-9 h-9 rounded-xl flex items-center justify-center text-xs font-serif font-bold shrink-0 mt-0.5 border ${
                         isCurrent
-                          ? 'bg-[#CBB082] text-[#1D362D] border-[#FFF9EF]'
+                          ? 'bg-[#CBB082] text-[#1D362D] border-[#FFF9EF] shadow-md'
                           : isCompleted
-                          ? 'bg-[#294C3F] text-[#FFF9EF] border-transparent'
+                          ? 'bg-[#294C3F] text-[#FFF9EF] border-transparent shadow-xs'
                           : 'bg-[#F3E9D8] text-[#294C3F] border-[#294C3F]/15'
                       }`}
                     >
@@ -112,7 +112,7 @@ export const RecorridoView: React.FC = () => {
                           {dayItem.title}
                         </h3>
                         {isCurrent && (
-                          <span className="text-[9px] uppercase tracking-wider font-bold px-1.5 py-0.2 rounded bg-[#CBB082] text-[#1D362D]">
+                          <span className="text-[9px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full bg-[#CBB082] text-[#1D362D] shadow-xs">
                             Hoy
                           </span>
                         )}

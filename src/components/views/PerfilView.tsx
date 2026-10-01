@@ -52,8 +52,10 @@ export const PerfilView: React.FC = () => {
         </p>
       </section>
 
-      {/* Subscription Status Card in Rich Deep Green */}
-      <section className="p-5 rounded-3xl bg-[#294C3F] text-[#FFF9EF] flex items-center justify-between border-2 border-[#CBB082]/40 shadow-xl relative overflow-hidden">
+      {/* Subscription Status Card in Rich Deep Green with Depth */}
+      <section className="p-5 rounded-3xl card-depth-dark text-[#FFF9EF] flex items-center justify-between relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-36 h-36 bg-[#CBB082]/15 rounded-full blur-2xl pointer-events-none" />
+
         <div className="space-y-1 relative z-10">
           <span className="text-[10px] uppercase tracking-widest text-[#CBB082] font-bold block">
             Membresía
@@ -61,7 +63,7 @@ export const PerfilView: React.FC = () => {
           <h3 className="font-serif text-xl font-bold text-[#FFF9EF]">
             {userProfile.isSubscribed ? 'PAUSA Completa' : 'Periodo de Bienvenida'}
           </h3>
-          <p className="text-xs text-[#FFF9EF]/80 font-light">
+          <p className="text-xs text-[#FFF9EF]/85 font-light">
             {userProfile.isSubscribed
               ? 'Acceso ilimitado a pausas y recorrido'
               : 'Acceso a las 4 experiencias y los 14 días'}
@@ -70,15 +72,15 @@ export const PerfilView: React.FC = () => {
 
         <button
           onClick={() => setCurrentView('paywall')}
-          className="relative z-10 px-4 py-2.5 rounded-xl bg-[#CBB082] hover:bg-[#d8c29b] text-[#1D362D] text-xs font-bold transition-all shadow-md active:scale-95 shrink-0"
+          className="relative z-10 px-4 py-2.5 rounded-xl bg-[#CBB082] hover:bg-[#d8c29b] text-[#1D362D] text-xs font-bold transition-all button-tactile-light shrink-0"
         >
           {userProfile.isSubscribed ? 'Gestionar' : 'Ver planes'}
         </button>
       </section>
 
-      {/* Profile Form */}
+      {/* Profile Form with Depth */}
       <form onSubmit={handleSave} className="space-y-4">
-        <div className="p-5 rounded-3xl bg-white border-2 border-[#294C3F]/20 space-y-4 shadow-sm">
+        <div className="p-5 rounded-3xl card-depth-md space-y-4">
           <div>
             <label htmlFor="user-name" className="block text-xs font-bold text-[#1D362D] mb-1.5">
               ¿Cómo te llamas?
@@ -88,7 +90,7 @@ export const PerfilView: React.FC = () => {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-[#FFF9EF] border border-[#294C3F]/25 text-sm font-semibold text-[#1D362D] focus:outline-none focus:border-[#294C3F] focus:ring-1 focus:ring-[#294C3F]"
+              className="w-full px-4 py-3 rounded-xl bg-[#FFF9EF] border border-[#294C3F]/25 text-sm font-semibold text-[#1D362D] focus:outline-none focus:border-[#294C3F] focus:ring-1 focus:ring-[#294C3F] shadow-2xs"
             />
           </div>
 
@@ -100,7 +102,7 @@ export const PerfilView: React.FC = () => {
               id="user-need"
               value={primaryNeed}
               onChange={(e) => setPrimaryNeed(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-[#FFF9EF] border border-[#294C3F]/25 text-xs sm:text-sm font-semibold text-[#1D362D] focus:outline-none focus:border-[#294C3F]"
+              className="w-full px-4 py-3 rounded-xl bg-[#FFF9EF] border border-[#294C3F]/25 text-xs sm:text-sm font-semibold text-[#1D362D] focus:outline-none focus:border-[#294C3F] shadow-2xs"
             >
               <option value="Mi mente va demasiado rápido">Mi mente va demasiado rápido</option>
               <option value="Tengo demasiados pendientes y me sobrepaso">Tengo demasiados pendientes y me sobrepaso</option>
@@ -117,7 +119,7 @@ export const PerfilView: React.FC = () => {
               id="user-moment"
               value={usualMoment}
               onChange={(e) => setUsualMoment(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-[#FFF9EF] border border-[#294C3F]/25 text-xs sm:text-sm font-semibold text-[#1D362D] focus:outline-none focus:border-[#294C3F]"
+              className="w-full px-4 py-3 rounded-xl bg-[#FFF9EF] border border-[#294C3F]/25 text-xs sm:text-sm font-semibold text-[#1D362D] focus:outline-none focus:border-[#294C3F] shadow-2xs"
             >
               <option value="En medio de la jornada (cuando surge el agobio)">En medio de la jornada (cuando surge el agobio)</option>
               <option value="Al final del día (para cerrar y descansar)">Al final del día (para cerrar y descansar)</option>
@@ -127,22 +129,22 @@ export const PerfilView: React.FC = () => {
 
           <button
             type="submit"
-            className="w-full py-4 rounded-xl bg-[#294C3F] hover:bg-[#1D362D] text-[#FFF9EF] text-xs font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 active:scale-98 shadow-md border border-[#CBB082]/30"
+            className="w-full py-4 rounded-xl bg-[#294C3F] hover:bg-[#1D362D] text-[#FFF9EF] text-xs font-bold uppercase tracking-widest button-tactile flex items-center justify-center gap-2 active:scale-98 border border-[#CBB082]/40"
           >
             <Check size={16} />
             <span>Guardar cambios</span>
           </button>
 
           {showSavedToast && (
-            <p className="text-xs text-[#294C3F] text-center font-bold animate-fade-in bg-[#F3E9D8] py-2 rounded-xl border border-[#294C3F]/15">
+            <p className="text-xs text-[#294C3F] text-center font-bold animate-fade-in bg-[#F3E9D8] py-2.5 rounded-xl border border-[#294C3F]/15 shadow-xs">
               Cambios guardados con éxito.
             </p>
           )}
         </div>
       </form>
 
-      {/* Preferences & Sound */}
-      <section className="p-5 rounded-3xl bg-white border-2 border-[#294C3F]/20 space-y-3 shadow-sm">
+      {/* Preferences & Sound with Depth */}
+      <section className="p-5 rounded-3xl card-depth-sm space-y-3">
         <h3 className="text-xs font-bold uppercase tracking-widest text-[#294C3F]">
           Preferencias de sonido
         </h3>
@@ -161,12 +163,12 @@ export const PerfilView: React.FC = () => {
             type="button"
             onClick={toggleSound}
             aria-label={soundEnabled ? 'Silenciar sonidos' : 'Activar sonidos'}
-            className={`w-13 h-7 rounded-full transition-colors relative flex items-center px-1 shrink-0 ${
+            className={`w-13 h-7 rounded-full transition-colors relative flex items-center px-1 shrink-0 shadow-inner ${
               soundEnabled ? 'bg-[#294C3F]' : 'bg-[#E4D5BE]'
             }`}
           >
             <span
-              className={`w-5 h-5 rounded-full bg-white transition-transform shadow-xs ${
+              className={`w-5 h-5 rounded-full bg-white transition-transform shadow-md ${
                 soundEnabled ? 'translate-x-6' : 'translate-x-0'
               }`}
             />

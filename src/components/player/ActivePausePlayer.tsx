@@ -45,6 +45,28 @@ export const ActivePausePlayer: React.FC = () => {
     }
   }, [soundEnabled]);
 
+  // Ambient Ocean Waves lifecycle management
+  // Starts after the initial chime and plays continuously during active breathing
+  useEffect(() => {
+    let wavesTimer: ReturnType<typeof setTimeout> | null = null;
+
+    if (stage === 'active' && !isPaused && !showExitModal && soundEnabled) {
+      // Delay wave onset 1.2s so the initial chime rings clearly first
+      wavesTimer = setTimeout(() => {
+        soundService.startOceanWaves(0.40);
+      }, 1200);
+    } else if (isPaused || showExitModal) {
+      soundService.pauseOceanWaves();
+    } else {
+      soundService.stopOceanWaves(1.8);
+    }
+
+    return () => {
+      if (wavesTimer) clearTimeout(wavesTimer);
+      soundService.stopOceanWaves(1.5);
+    };
+  }, [stage, isPaused, showExitModal, soundEnabled]);
+
   // Real-time functional 2-minute countdown timer (02:00 -> 00:00)
   useEffect(() => {
     if (stage !== 'active' || isPaused || showExitModal) return;
@@ -187,7 +209,8 @@ export const ActivePausePlayer: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={toggleSound}
-            aria-label={soundEnabled ? 'Silenciar campanita' : 'Activar campanita'}
+            aria-label={soundEnabled ? 'Silenciar olas y sonido ambiental' : 'Activar olas y sonido ambiental'}
+            title={soundEnabled ? 'Sonido de olas activado' : 'Sonido silenciado'}
             className="w-9 h-9 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 active:scale-95 transition-all text-[#FFF9EF]"
           >
             {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
@@ -241,20 +264,20 @@ export const ActivePausePlayer: React.FC = () => {
                 }`}
               />
 
-              {/* Inner Glowing Orb with Delicate Original Typography */}
+              {/* Inner Glowing Orb with Delicate Original Typography and Soft 3D Lighting */}
               <div
-                className={`relative w-44 h-44 rounded-full bg-gradient-to-br from-[#527A68] via-[#294C3F] to-[#1F372E] border border-[#CBB082]/40 shadow-2xl flex flex-col items-center justify-center p-4 transition-all duration-[4000ms] ease-in-out ${
+                className={`relative w-48 h-48 rounded-full bg-gradient-to-br from-[#5D8874] via-[#294C3F] to-[#162922] border border-[#CBB082]/55 flex flex-col items-center justify-center p-4 transition-all duration-[4000ms] ease-in-out ${
                   breathPhase === 'inhale'
-                    ? 'scale-110 shadow-[#527A68]/40'
+                    ? 'scale-110 shadow-[0_24px_60px_rgba(82,122,104,0.5),inset_0_2px_6px_rgba(255,255,255,0.3),inset_0_-6px_12px_rgba(0,0,0,0.4)]'
                     : breathPhase === 'exhale'
-                    ? 'scale-90 shadow-none'
-                    : 'scale-100'
+                    ? 'scale-90 shadow-[0_12px_30px_rgba(29,54,45,0.3),inset_0_1px_3px_rgba(255,255,255,0.15)]'
+                    : 'scale-100 shadow-[0_18px_45px_rgba(29,54,45,0.45),inset_0_2px_4px_rgba(255,255,255,0.2)]'
                 }`}
               >
-                <span className="font-serif text-2xl font-semibold tracking-wide text-[#FFF9EF]">
+                <span className="font-serif text-2xl sm:text-3xl font-semibold tracking-wide text-[#FFF9EF] drop-shadow-sm">
                   {breathText}
                 </span>
-                <span className="text-[11px] text-[#CBB082] mt-1 font-light tracking-wide text-center px-2">
+                <span className="text-[11px] text-[#CBB082] mt-1 font-light tracking-wide text-center px-2 drop-shadow-xs">
                   {breathSubtext}
                 </span>
               </div>

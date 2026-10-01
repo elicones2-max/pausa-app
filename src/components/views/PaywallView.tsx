@@ -38,16 +38,24 @@ export const PaywallView: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFF9EF] text-[#1D362D] flex flex-col justify-between max-w-md mx-auto w-full px-6 py-6 border-x-2 border-[#294C3F]/20 shadow-2xl">
+    <div className="min-h-screen bg-[#FFF9EF] text-[#1D362D] flex flex-col justify-between max-w-md mx-auto w-full px-4.5 sm:px-6 py-5 sm:py-6 border-x-2 border-[#294C3F]/20 shadow-2xl">
       {/* Header with High-End Calm Presence */}
-      <header className="flex items-center justify-between pb-4 border-b border-[#294C3F]/15">
-        <div className="flex items-center gap-2">
-          <span className="font-serif text-2xl font-bold tracking-tight text-[#294C3F]">
-            PAUSA
-          </span>
-          <span className="text-[10px] uppercase tracking-widest text-[#294C3F] font-bold bg-[#F3E9D8] px-2 py-0.5 rounded-full border border-[#294C3F]/20">
-            Membresía
-          </span>
+      <header className="flex items-center justify-between pb-3.5 border-b border-[#294C3F]/15">
+        <div className="flex items-center gap-2.5">
+          <img
+            src="/logo-pausa.png"
+            alt="Logo PAUSA"
+            className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl object-contain shadow-xs border border-[#294C3F]/15 shrink-0 bg-[#FFF9EF]"
+            referrerPolicy="no-referrer"
+          />
+          <div className="flex items-center gap-2">
+            <span className="font-serif text-[26px] sm:text-2xl font-bold tracking-tight text-[#294C3F] leading-none">
+              PAUSA
+            </span>
+            <span className="text-[10px] uppercase tracking-widest text-[#294C3F] font-bold bg-[#F3E9D8] px-2 py-0.5 rounded-full border border-[#294C3F]/20 hidden xs:inline-block">
+              Membresía
+            </span>
+          </div>
         </div>
 
         <button
@@ -60,31 +68,40 @@ export const PaywallView: React.FC = () => {
       </header>
 
       {/* Main Pitch */}
-      <main className="flex-1 flex flex-col justify-center py-5 space-y-5">
-        {/* Intro */}
-        <div className="text-center space-y-2">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#294C3F] text-[#CBB082] text-xs font-bold shadow-xs">
-            <Sparkles size={13} />
-            <span>Membresía PAUSA</span>
+      <main className="flex-1 flex flex-col justify-center py-4 space-y-4">
+        {/* Editorial Membership Card */}
+        <div className="relative w-full h-36 rounded-[26px] overflow-hidden shadow-md border border-[#CBB082]/35 bg-[#1D362D] p-4 flex flex-col justify-between">
+          <img
+            src="/hero-editorial.jpg"
+            alt="Membresía PAUSA"
+            className="w-full h-full object-cover object-center absolute inset-0"
+            referrerPolicy="no-referrer"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1D362D]/95 via-[#1D362D]/40 to-black/25" />
+          <div className="relative z-10 flex items-center justify-between">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#1D362D]/85 backdrop-blur-md text-[#CBB082] text-[10px] font-bold tracking-wider border border-[#CBB082]/35">
+              <Sparkles size={11} />
+              <span>MEMBRESÍA COMPLETA</span>
+            </span>
+            <span className="text-[11px] text-[#FFF9EF] font-mono bg-black/40 px-2 py-0.5 rounded-full border border-white/15">
+              Sin límites
+            </span>
           </div>
-
-          <h1 className="font-serif text-3xl font-medium text-[#1D362D] leading-snug">
-            {headingText}
-          </h1>
-
-          <p className="text-xs sm:text-sm text-[#3B5B4D] max-w-xs mx-auto leading-relaxed font-medium">
-            Sigue teniendo una pausa guiada de 2 minutos cuando la necesites y una PAUSA DIARIA para acompañar tu ritmo.
-          </p>
+          <div className="relative z-10 text-left">
+            <h2 className="font-serif text-xl sm:text-2xl text-[#FFF9EF] font-medium leading-snug">
+              {headingText}
+            </h2>
+          </div>
         </div>
 
-        {/* Clear Communication of What the Membership Unlocks */}
-        <div className="bg-white rounded-3xl p-5 border-2 border-[#294C3F]/20 space-y-3.5 text-xs text-[#1D362D] shadow-sm">
+        {/* Clear Communication of What the Membership Unlocks with Depth */}
+        <div className="rounded-3xl p-5 card-depth-md space-y-3.5 text-xs text-[#1D362D]">
           <span className="text-[10px] uppercase tracking-widest text-[#294C3F] font-bold block mb-1">
             Lo que incluye tu membresía
           </span>
 
           <div className="flex items-start gap-3">
-            <div className="w-6 h-6 rounded-lg bg-[#294C3F]/10 flex items-center justify-center shrink-0 mt-0.5 text-[#294C3F]">
+            <div className="w-7 h-7 rounded-xl bg-[#294C3F]/10 border border-[#294C3F]/15 flex items-center justify-center shrink-0 mt-0.5 text-[#294C3F] shadow-2xs">
               <Compass size={14} />
             </div>
             <div>
@@ -96,7 +113,7 @@ export const PaywallView: React.FC = () => {
           </div>
 
           <div className="flex items-start gap-3">
-            <div className="w-6 h-6 rounded-lg bg-[#294C3F]/10 flex items-center justify-center shrink-0 mt-0.5 text-[#294C3F]">
+            <div className="w-7 h-7 rounded-xl bg-[#294C3F]/10 border border-[#294C3F]/15 flex items-center justify-center shrink-0 mt-0.5 text-[#294C3F] shadow-2xs">
               <Calendar size={14} />
             </div>
             <div>
@@ -108,7 +125,7 @@ export const PaywallView: React.FC = () => {
           </div>
 
           <div className="flex items-start gap-3">
-            <div className="w-6 h-6 rounded-lg bg-[#294C3F]/10 flex items-center justify-center shrink-0 mt-0.5 text-[#294C3F]">
+            <div className="w-7 h-7 rounded-xl bg-[#294C3F]/10 border border-[#294C3F]/15 flex items-center justify-center shrink-0 mt-0.5 text-[#294C3F] shadow-2xs">
               <Check size={14} className="stroke-[3]" />
             </div>
             <div>
@@ -120,7 +137,7 @@ export const PaywallView: React.FC = () => {
           </div>
 
           <div className="flex items-start gap-3">
-            <div className="w-6 h-6 rounded-lg bg-[#294C3F]/10 flex items-center justify-center shrink-0 mt-0.5 text-[#294C3F]">
+            <div className="w-7 h-7 rounded-xl bg-[#294C3F]/10 border border-[#294C3F]/15 flex items-center justify-center shrink-0 mt-0.5 text-[#294C3F] shadow-2xs">
               <Award size={14} />
             </div>
             <div>
@@ -132,22 +149,22 @@ export const PaywallView: React.FC = () => {
           </div>
         </div>
 
-        {/* Plan Selector */}
+        {/* Plan Selector with Depth */}
         <div className="space-y-3">
           {/* Plan Anual con 7 días de prueba */}
           <button
             type="button"
             onClick={() => setSelectedPlan('annual')}
-            className={`w-full p-4 rounded-2xl border-2 text-left flex items-center justify-between transition-all ${
+            className={`w-full p-4 rounded-2xl text-left flex items-center justify-between transition-all cursor-pointer ${
               selectedPlan === 'annual'
-                ? 'bg-[#294C3F] text-[#FFF9EF] border-[#294C3F] shadow-xl'
-                : 'bg-white text-[#1D362D] border-[#294C3F]/20 hover:border-[#294C3F]'
+                ? 'card-depth-dark text-[#FFF9EF] ring-2 ring-[#CBB082]/60 shadow-xl'
+                : 'card-depth-sm text-[#1D362D] hover:border-[#294C3F]/40'
             }`}
           >
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-sm font-bold">Anual · 7 días de prueba</span>
-                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-[#CBB082] text-[#1D362D]">
+                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-[#CBB082] text-[#1D362D] shadow-xs">
                   Recomendado
                 </span>
               </div>
@@ -155,7 +172,7 @@ export const PaywallView: React.FC = () => {
                 Hoy no pagas nada · Luego $39.99 al año (~$3.33/mes)
               </span>
             </div>
-            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shadow-xs ${
               selectedPlan === 'annual' ? 'border-[#FFF9EF] bg-[#CBB082]' : 'border-[#294C3F]/40'
             }`}>
               {selectedPlan === 'annual' && <span className="w-2.5 h-2.5 rounded-full bg-[#1D362D]" />}
@@ -166,10 +183,10 @@ export const PaywallView: React.FC = () => {
           <button
             type="button"
             onClick={() => setSelectedPlan('monthly')}
-            className={`w-full p-4 rounded-2xl border-2 text-left flex items-center justify-between transition-all ${
+            className={`w-full p-4 rounded-2xl text-left flex items-center justify-between transition-all cursor-pointer ${
               selectedPlan === 'monthly'
-                ? 'bg-[#294C3F] text-[#FFF9EF] border-[#294C3F] shadow-xl'
-                : 'bg-white text-[#1D362D] border-[#294C3F]/20 hover:border-[#294C3F]'
+                ? 'card-depth-dark text-[#FFF9EF] ring-2 ring-[#CBB082]/60 shadow-xl'
+                : 'card-depth-sm text-[#1D362D] hover:border-[#294C3F]/40'
             }`}
           >
             <div>
@@ -178,7 +195,7 @@ export const PaywallView: React.FC = () => {
                 $4.99 al mes · Cobro mensual renovable
               </span>
             </div>
-            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shadow-xs ${
               selectedPlan === 'monthly' ? 'border-[#FFF9EF] bg-[#CBB082]' : 'border-[#294C3F]/40'
             }`}>
               {selectedPlan === 'monthly' && <span className="w-2.5 h-2.5 rounded-full bg-[#1D362D]" />}

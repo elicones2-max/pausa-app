@@ -70,4 +70,5 @@ export interface UserProfile {
   isOnboarded: boolean;
   isSubscribed: boolean;
   createdAt: string;
+  avatar_url?: string | null;
 }

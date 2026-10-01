@@ -37,9 +37,9 @@ export const LogrosView: React.FC = () => {
         </p>
       </section>
 
-      {/* High-Contrast Metrics Cards */}
-      <section className="grid grid-cols-2 gap-3">
-        <div className="p-5 rounded-3xl bg-white border-2 border-[#294C3F]/20 shadow-sm text-left">
+      {/* Metrics Cards with Depth */}
+      <section className="grid grid-cols-2 gap-3.5">
+        <div className="p-5 rounded-3xl card-depth-md text-left">
           <span className="text-[10px] uppercase tracking-wider text-[#294C3F] font-bold block mb-1">
             Pausas completadas
           </span>
@@ -51,7 +51,7 @@ export const LogrosView: React.FC = () => {
           </span>
         </div>
 
-        <div className="p-5 rounded-3xl bg-white border-2 border-[#294C3F]/20 shadow-sm text-left">
+        <div className="p-5 rounded-3xl card-depth-md text-left">
           <span className="text-[10px] uppercase tracking-wider text-[#294C3F] font-bold block mb-1">
             Tiempo de pausa
           </span>
@@ -65,8 +65,8 @@ export const LogrosView: React.FC = () => {
       </section>
 
       {/* How it felt summary */}
-      {completedCount > 0 && (
-        <section className="p-5 rounded-3xl bg-[#F3E9D8] border-2 border-[#294C3F]/20 space-y-3.5 shadow-sm">
+      {completedCount > 0 ? (
+        <section className="p-5 rounded-3xl card-depth-gold space-y-3.5">
           <div className="flex items-center justify-between">
             <h2 className="font-serif text-lg font-bold text-[#1D362D]">
               Cómo te has sentido después
@@ -79,37 +79,49 @@ export const LogrosView: React.FC = () => {
           </p>
 
           <div className="space-y-2 pt-1">
-            <div className="flex items-center justify-between text-xs bg-white/80 p-2.5 rounded-xl border border-[#294C3F]/10">
+            <div className="flex items-center justify-between text-xs bg-white/90 p-3 rounded-xl border border-[#294C3F]/10 shadow-xs">
               <span className="flex items-center gap-2 font-medium text-[#1D362D]">
                 <span>🌿</span> Más tranquila
               </span>
-              <span className="font-bold text-[#294C3F] bg-[#294C3F]/10 px-2.5 py-0.5 rounded-full">
+              <span className="font-bold text-[#294C3F] bg-[#294C3F]/10 px-2.5 py-0.5 rounded-full font-mono">
                 {feelingCounts['mas_tranquila'] || 0} veces
               </span>
             </div>
 
-            <div className="flex items-center justify-between text-xs bg-white/80 p-2.5 rounded-xl border border-[#294C3F]/10">
+            <div className="flex items-center justify-between text-xs bg-white/90 p-3 rounded-xl border border-[#294C3F]/10 shadow-xs">
               <span className="flex items-center gap-2 font-medium text-[#1D362D]">
                 <span>🌱</span> Igual (espacio concedido)
               </span>
-              <span className="font-bold text-[#294C3F] bg-[#294C3F]/10 px-2.5 py-0.5 rounded-full">
+              <span className="font-bold text-[#294C3F] bg-[#294C3F]/10 px-2.5 py-0.5 rounded-full font-mono">
                 {feelingCounts['igual'] || 0} veces
               </span>
             </div>
 
-            <div className="flex items-center justify-between text-xs bg-white/80 p-2.5 rounded-xl border border-[#294C3F]/10">
+            <div className="flex items-center justify-between text-xs bg-white/90 p-3 rounded-xl border border-[#294C3F]/10 shadow-xs">
               <span className="flex items-center gap-2 font-medium text-[#1D362D]">
                 <span>🤲</span> Todavía sobrepasada (acto de cuidado)
               </span>
-              <span className="font-bold text-[#294C3F] bg-[#294C3F]/10 px-2.5 py-0.5 rounded-full">
+              <span className="font-bold text-[#294C3F] bg-[#294C3F]/10 px-2.5 py-0.5 rounded-full font-mono">
                 {feelingCounts['todavia_sobrepasada'] || 0} veces
               </span>
             </div>
           </div>
         </section>
+      ) : (
+        <section className="p-5 rounded-3xl card-depth-sm text-center space-y-2">
+          <div className="w-12 h-12 rounded-2xl bg-[#F3E9D8] text-2xl flex items-center justify-center mx-auto text-[#294C3F] shadow-xs">
+            🌱
+          </div>
+          <h3 className="font-serif text-lg font-bold text-[#1D362D]">
+            Tu registro de bienestar
+          </h3>
+          <p className="text-xs text-[#3B5B4D] max-w-xs mx-auto leading-relaxed font-medium">
+            Cuando completes tu primera pausa de 2 minutos, aquí podrás ver cómo va cambiando tu estado y cómo respondes al estrés del día.
+          </p>
+        </section>
       )}
 
-      {/* Gentle Badges Section with Bold Contrast */}
+      {/* Gentle Badges Section with Depth */}
       <section className="space-y-3">
         <h2 className="font-serif text-2xl font-medium text-[#1D362D] px-1">
           Hitos que estás descubriendo
@@ -121,17 +133,17 @@ export const LogrosView: React.FC = () => {
             return (
               <div
                 key={ach.id}
-                className={`p-4 rounded-2xl border-2 transition-all flex items-start gap-3.5 ${
+                className={`p-4.5 rounded-2xl transition-all flex items-start gap-3.5 ${
                   isUnlocked
-                    ? 'bg-white border-[#294C3F]/30 shadow-sm'
-                    : 'bg-white/60 border-[#294C3F]/10 opacity-60'
+                    ? 'card-depth-sm text-[#1D362D]'
+                    : 'bg-white/50 border border-[#294C3F]/10 opacity-60'
                 }`}
               >
                 <div
                   className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shrink-0 ${
                     isUnlocked
-                      ? 'bg-[#294C3F] text-[#CBB082] shadow-xs'
-                      : 'bg-[#F3E9D8] text-[#294C3F]/50'
+                      ? 'bg-gradient-to-br from-[#2E5547] to-[#1D362D] text-[#CBB082] shadow-md border border-[#CBB082]/35'
+                      : 'bg-[#F3E9D8] text-[#294C3F]/40 border border-[#294C3F]/10'
                   }`}
                 >
                   {ach.icon}
